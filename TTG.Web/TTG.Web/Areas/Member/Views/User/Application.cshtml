@@ -1,0 +1,148 @@
+﻿@model TTG.Web.Areas.Member.Models.ApplicationViewModel
+
+@{
+    ViewBag.Title = "申请上市";
+}
+
+
+<div class="body-content container main-content ">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="~/img/Coin.jpg" class="img-responsive" />
+        </div>
+        <div class="col-md-6">
+            @using (Html.BeginForm("Application","User",FormMethod.Post,new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CoinName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CoinName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CoinName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ApplicantName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ApplicantName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ApplicantName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PhoneNum, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PhoneNum, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNum, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label class="col-md-2 control-label">公司白皮书</label>
+                        <div class="col-md-10">
+                            <div id="fileparent">
+                             <input type="file" id="MyFile" name="MyFile" class="btn btn-default" style="background-color:white" />
+                            </div>
+                            </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+
+                            <input type="submit" value="提交申请" class="btn btn-default" style="background-color:green" id="up"/>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrapplugin")
+    }
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+
+        $("#up").click(function(){
+        
+            alert($("#MyFile")[0].files[0].size);
+            if($("#MyFile")[0].files[0].size>1024000){
+                alert("文件过大！");
+                //清理file里的文件内容
+                $("#fileparent").html('<input type="file" id="MyFile" name="MyFile" class="btn btn-default" style="background-color:white" />');
+                return;
+            }
+            alert($("#MyFile").val());
+            //获取上传文件路径
+            var string=$("#MyFile")[0].value;
+            //对路径字符串进行剪切截取
+            var arrays=string.split("\\");
+            //获取文件名，包含后缀
+            var name=arrays[arrays.length-1];
+            alert(name);
+            //为了辨别格式，统一变小写
+            name=name.toLowerCase();
+            if(!(name.endsWith("txt")||name.endsWith("doc")||name.endsWith("docx"))){
+                alert("请上传txt、doc或docx格式的文件！");
+                //清理file里的文件内容
+                $("#fileparent").html('<input type="file" id="MyFile" name="MyFile" class="btn btn-default" style="background-color:white" />');
+            };
+        });
+     //成功提示框
+        $.showSuccessTimeout = function(str, func) {
+            BootstrapDialog.show({
+                type : BootstrapDialog.TYPE_SUCCESS,
+                title : 'TTG ',
+                message : str,
+                size : BootstrapDialog.SIZE_SMALL,
+                buttons : [ {
+                    label : '确定',
+                    action : function(dialogItself) {
+                        dialogItself.close();
+                    }
+                } ],
+                // 指定时间内可自动关闭
+                //onshown : function(dialogRef) {
+                //    setTimeout(function() {
+                //        dialogRef.close();
+                //    }, YUNM._set.timeout);
+                //},
+                //onhide : func
+            });
+        };
+
+        if(@ViewBag.Success==1) $.showSuccessTimeout("提交成功，请注意来电或邮箱信息");
+        if(@ViewBag.Success==-1)$.showSuccessTimeout("提交失败，请注意提交内容或请求客服支援");
+        if(@ViewBag.Success==0)$.showSuccessTimeout("请上传文件");
+        else if(@ViewBag.Success==100) $.showSuccessTimeout("请注意文件大小(<4M)");
+
+
+
+
+
+    });
+</script>
