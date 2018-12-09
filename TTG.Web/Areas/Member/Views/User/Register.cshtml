@@ -1,0 +1,174 @@
+﻿@model TTG.Web.Areas.Member.Models.RegisterViewModel
+
+@{
+    ViewBag.Title = "TTG用户注册";
+}   
+ <div class="main-content">
+    <br /><br />
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Sex, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.RadioButtonFor(model => model.Sex, 1) 男
+                    @Html.RadioButtonFor(model => model.Sex, 0) 女
+                    @Html.RadioButtonFor(model => model.Sex, 2) 保密
+                    @Html.ValidationMessageFor(model => model.Sex, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.VerificationCode, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.VerificationCode)
+                    @*<img id="verificationcode" title="点击刷新" src="@Url.Action("VerificationCode","User")" style="cursor:pointer" />*@
+                    <input type="button" class="btn btn-default" value="获取验证码" id="getCode" style="color:black"/>
+                    @Html.ValidationMessageFor(model => model.VerificationCode)
+                    <span id="success"></span>
+                </div>
+            </div>
+
+            <div class="checkbox col-md-offset-2">
+                <input type="checkbox" required />我同意 <a href="@Url.Action("RegProtocol","User")">《用户注册协议》</a>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="注册" class="btn btn-default" id="up" style="background-color:green"/>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+  <script type="text/javascript">
+     
+     //成功提示框
+        $.showSuccessTimeout = function(str, func) {
+            BootstrapDialog.show({
+                type : BootstrapDialog.TYPE_SUCCESS,
+                title : '成功 ',
+                message : str,
+                size : BootstrapDialog.SIZE_SMALL,
+                buttons : [ {
+                    label : '确定',
+                    action : function(dialogItself) {
+                        dialogItself.close();
+                    }
+                } ],
+                // 指定时间内可自动关闭
+                onshown : function(dialogRef) {
+                    setTimeout(function() {
+                        dialogRef.close();
+                    }, YUNM._set.timeout);
+                },
+                onhide : func
+            });
+        };
+
+        if(@ViewBag.Success==1) $.showSuccessTimeout("注册成功");
+       
+       $("#getCode").click(function () {
+          
+           //var p = $('#PhoneNumber').val();
+           if (isPoneAvailable($('#PhoneNumber')) == false) {
+               $('#success').text("请输入合适的手机号");
+           }
+           else {
+               @* $.post("url",{key:"value",..},function(data){},datatype) *@
+               $.post("@Url.Action("GetCheckNum", "User")", { phoneNum: $('#PhoneNumber').val() }, function (data) {
+                   if (data.msg) {
+                       $('#success').text("已发送验证码");
+                       checkGetCodeBtn();
+                       
+                   } else {
+                       var $getCodeBtn = $('#getCode');
+                       clearInterval(t);
+                       $getCodeBtn.prop('disabled', false);
+                       $getCodeBtn.val("点击获取验证码");
+                       count = 60;
+                       $('#success').text("");
+                   }
+               }, "json")
+           }
+           });
+       var count = 60; //计时开始
+       var t; //时间间隔种子
+       var isPass = false;//验证码是否输入正确
+       function checkGetCodeBtn() {
+           //关于按钮
+           var $getCodeBtn = $('#getCode');
+
+           t = setInterval(function () {
+               
+               $getCodeBtn.val(count + "秒后获取");
+               $getCodeBtn.prop('disabled', true);
+               count--;
+               
+               if (count == 0) {
+                   clearInterval(t);
+                   $getCodeBtn.prop('disabled', false);
+                   $getCodeBtn.val("获取验证码");
+                   count = 60;
+                   $('#success').text("");
+               }
+           }, 1000);
+       }
+       //判断是否为手机号
+       function isPoneAvailable($poneInput) {
+           var myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+           if (!myreg.test($poneInput.val())) {
+               return false;
+           } else {
+               return true;
+           }
+       }
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/bootstrapplugin")
+}

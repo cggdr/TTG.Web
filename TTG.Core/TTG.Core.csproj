@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A5670EF0-75D8-4CC4-9BE7-36FAB70A05BC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TTG.Core</RootNamespace>
+    <AssemblyName>TTG.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LinqKit, Version=1.1.15.0, Culture=neutral, PublicKeyToken=bc217f8844052a91, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqKit.1.1.15\lib\net45\LinqKit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Administrator.cs" />
+    <Compile Include="AdministratorManager.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="ApplicationManager.cs" />
+    <Compile Include="BaseManager.cs" />
+    <Compile Include="ContextFactory.cs" />
+    <Compile Include="Entrust.cs" />
+    <Compile Include="EntrustDetails.cs" />
+    <Compile Include="EntrustDetailsManager.cs" />
+    <Compile Include="EntrustManager.cs" />
+    <Compile Include="Interaction.cs" />
+    <Compile Include="InteractionManager.cs" />
+    <Compile Include="Migrations\201811010530105_Modify.cs" />
+    <Compile Include="Migrations\201811010530105_Modify.Designer.cs">
+      <DependentUpon>201811010530105_Modify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011112337_addidenty.cs" />
+    <Compile Include="Migrations\201811011112337_addidenty.Designer.cs">
+      <DependentUpon>201811011112337_addidenty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011200223_addPriceInADeal.cs" />
+    <Compile Include="Migrations\201811011200223_addPriceInADeal.Designer.cs">
+      <DependentUpon>201811011200223_addPriceInADeal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011218371_TaTalTable.cs" />
+    <Compile Include="Migrations\201811011218371_TaTalTable.Designer.cs">
+      <DependentUpon>201811011218371_TaTalTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011238184_modifypassword.cs" />
+    <Compile Include="Migrations\201811011238184_modifypassword.Designer.cs">
+      <DependentUpon>201811011238184_modifypassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011417191_identy.cs" />
+    <Compile Include="Migrations\201811011417191_identy.Designer.cs">
+      <DependentUpon>201811011417191_identy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011429505_121.cs" />
+    <Compile Include="Migrations\201811011429505_121.Designer.cs">
+      <DependentUpon>201811011429505_121.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011430477_personals.cs" />
+    <Compile Include="Migrations\201811011430477_personals.Designer.cs">
+      <DependentUpon>201811011430477_personals.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011459437_test.cs" />
+    <Compile Include="Migrations\201811011459437_test.Designer.cs">
+      <DependentUpon>201811011459437_test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011502212_test2.cs" />
+    <Compile Include="Migrations\201811011502212_test2.Designer.cs">
+      <DependentUpon>201811011502212_test2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811011504437_test3.cs" />
+    <Compile Include="Migrations\201811011504437_test3.Designer.cs">
+      <DependentUpon>201811011504437_test3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811050228575_modifyamount.cs" />
+    <Compile Include="Migrations\201811050228575_modifyamount.Designer.cs">
+      <DependentUpon>201811050228575_modifyamount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811060108401_addFK.cs" />
+    <Compile Include="Migrations\201811060108401_addFK.Designer.cs">
+      <DependentUpon>201811060108401_addFK.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811130312099_addFKVirID.cs" />
+    <Compile Include="Migrations\201811130312099_addFKVirID.Designer.cs">
+      <DependentUpon>201811130312099_addFKVirID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811140117567_addTableInteraction.cs" />
+    <Compile Include="Migrations\201811140117567_addTableInteraction.Designer.cs">
+      <DependentUpon>201811140117567_addTableInteraction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811140229343_addRequierd.cs" />
+    <Compile Include="Migrations\201811140229343_addRequierd.Designer.cs">
+      <DependentUpon>201811140229343_addRequierd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811191458303_addFkId.cs" />
+    <Compile Include="Migrations\201811191458303_addFkId.Designer.cs">
+      <DependentUpon>201811191458303_addFkId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811191511154_addNullableToIdenty.cs" />
+    <Compile Include="Migrations\201811191511154_addNullableToIdenty.Designer.cs">
+      <DependentUpon>201811191511154_addNullableToIdenty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811280151516_Application.cs" />
+    <Compile Include="Migrations\201811280151516_Application.Designer.cs">
+      <DependentUpon>201811280151516_Application.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812041050033_App.cs" />
+    <Compile Include="Migrations\201812041050033_App.Designer.cs">
+      <DependentUpon>201812041050033_App.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="PriceInADeal.cs" />
+    <Compile Include="PriceInADealManager.cs" />
+    <Compile Include="PriceInDay.cs" />
+    <Compile Include="PriceInDayManager.cs" />
+    <Compile Include="PriceTable.cs" />
+    <Compile Include="PriceTableManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Role.cs" />
+    <Compile Include="RoleManager.cs" />
+    <Compile Include="TTGContext.cs" />
+    <Compile Include="Type.cs" />
+    <Compile Include="TypeManager.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserIdenty.cs" />
+    <Compile Include="UserIdentyManager.cs" />
+    <Compile Include="UserManager.cs" />
+    <Compile Include="VirtualCurrency.cs" />
+    <Compile Include="VirtualCurrencyManager.cs" />
+    <Compile Include="Wallet.cs" />
+    <Compile Include="WalletManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TTG.Data\TTG.Data.csproj">
+      <Project>{59aae396-d504-4997-99fe-7eca9313fd90}</Project>
+      <Name>TTG.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TTG.Helper\TTG.Helper.csproj">
+      <Project>{2b4abc13-0f01-4379-8236-27b4aa1decb1}</Project>
+      <Name>TTG.Helper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201811010530105_Modify.resx">
+      <DependentUpon>201811010530105_Modify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011112337_addidenty.resx">
+      <DependentUpon>201811011112337_addidenty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011200223_addPriceInADeal.resx">
+      <DependentUpon>201811011200223_addPriceInADeal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011218371_TaTalTable.resx">
+      <DependentUpon>201811011218371_TaTalTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011238184_modifypassword.resx">
+      <DependentUpon>201811011238184_modifypassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011417191_identy.resx">
+      <DependentUpon>201811011417191_identy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011429505_121.resx">
+      <DependentUpon>201811011429505_121.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011430477_personals.resx">
+      <DependentUpon>201811011430477_personals.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011459437_test.resx">
+      <DependentUpon>201811011459437_test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011502212_test2.resx">
+      <DependentUpon>201811011502212_test2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811011504437_test3.resx">
+      <DependentUpon>201811011504437_test3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811050228575_modifyamount.resx">
+      <DependentUpon>201811050228575_modifyamount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811060108401_addFK.resx">
+      <DependentUpon>201811060108401_addFK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811130312099_addFKVirID.resx">
+      <DependentUpon>201811130312099_addFKVirID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811140117567_addTableInteraction.resx">
+      <DependentUpon>201811140117567_addTableInteraction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811140229343_addRequierd.resx">
+      <DependentUpon>201811140229343_addRequierd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811191458303_addFkId.resx">
+      <DependentUpon>201811191458303_addFkId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811191511154_addNullableToIdenty.resx">
+      <DependentUpon>201811191511154_addNullableToIdenty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811280151516_Application.resx">
+      <DependentUpon>201811280151516_Application.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812041050033_App.resx">
+      <DependentUpon>201812041050033_App.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

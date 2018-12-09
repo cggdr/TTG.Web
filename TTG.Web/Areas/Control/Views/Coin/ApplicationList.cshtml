@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "申请详情";
+}
+
+@section SideNav{@Html.Partial("SideNavPartialView")}
+
+<ol class="breadcrumb">
+    <li><span class="glyphicon glyphicon-home"></span>  @Html.ActionLink("首页", "Index", "Coin")</li>
+    <li>@Html.ActionLink("交易对添加", "Add", "Coin")</li>
+    <li class="active" >@Html.ActionLink("申请详情", "ApplicationList", "Coin")</li>
+</ol>
+<table id="Appgrid"></table>
+<a href="@Url.Action("Download","Coin")">Click to get file</a>
+@section style{
+    @Styles.Render("~/Content/bootstrapplugincss")
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrapplugin")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //表格
+            var $table = $('#Appgrid');
+            $table.bootstrapTable({
+                onClickRow: function (row) {
+                    alert(row.FileAddress);
+                    $.post("@Url.Action("SaveFileName","Coin")", { filename: row.FileAddress});
+                },
+                showRefresh: true,
+                showColumns: true,
+             
+                pagination: true,
+                sidePagination: "client",
+                pageList: "[5, 10, 20, 50, 100]",
+                method: "post",
+                url: "@Url.Action("AppListJson")",
+                columns: [
+                    { title: "ID", field: "ID" },
+                    { title: "币种名称", field: "CoinName", formatter: function (value, row, index) { return "<a href='@Url.Action("Modify", "Role")/" + row.RoleID + "'>" + value + "</a>" } },
+                    { title: "申请人", field: "ApplicantName" },
+                    { title: "联系电话", field: "PhoneNum" },
+                    { title: "Email", field: "Email" },
+                     { title: "公司名称", field: "CompanyName" },
+                    { title: "提交时间", field: "CreateTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD HH:mm:ss") } },
+                    { title: "最近回复时间", field: "ReviewTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD HH:mm:ss") } },
+                    { title: "项目白皮书", field: "FileAddress" ,formatter:function(value){ return "<a href='@Url.Action("Download","Coin")' class='btn btn-sm' data-operation='download' data-value='"+value+"'>下载</a>"}},
+                    { title: "操作", field: "ID", formatter: function (value) { return "<a class='btn btn-sm btn-danger' data-operation='deleterole' data-value='" + value + "'>删除</a>" } }
+                ],
+                onLoadSuccess: function () {
+                    //删除按钮
+                    $("a[data-operation='deleterole']").click(function () {
+                        var id = $(this).attr("data-value");
+                        BootstrapDialog.confirm("你确定要删除" + $(this).parent().parent().find("td").eq(1).text() + "吗？请确保用户已将相关货币转移！", function (result) {
+                            if (result) {
+                                $.post("@Url.Action("DeleteJson", "Coin")", { id: id }, function (data) {
+                                    if (data.Code == 1) {
+                                        BootstrapDialog.show({
+                                            message: "删除该交易对成功",
+                                            buttons: [{
+                                                icon: "glyphicon glyphicon-ok",
+                                                label: "确定",
+                                                action: function (dialogItself) {
+                                                    $table.bootstrapTable("refresh");
+                                                    dialogItself.close();
+                                                }
+                                            }]
+
+                                        });
+                                    }
+                                    else BootstrapDialog.alert(data.Message);
+                                }, "json");
+                            }
+                        });
+                    });
+                    //删除按钮结束
+                    //下载按钮鼠标Hover时把文件名传过后台
+                    @*$("a[data-operation='download']").mouseover(function () {
+                        var name = $(this).attr("data-value");
+                        alert(name);
+                        $.post("@Url.Action("SaveFileName","Coin")", { filename: name });
+                    })*@
+                    //结束
+                }
+            });
+            //表格结束
+        });
+    </script>
+}
+
+

@@ -1,0 +1,947 @@
+﻿@model TTG.Web.Areas.Member.Models.AddEntrust
+
+<div class="main-content" style="background-color:#eeeee6" >
+
+<div class="row">
+        <div class="col-md-3">
+            <div class="row cointocoinbg" style="margin-right:5px">
+                <div class="col-md-11">
+                    <ul class="nav navbar-nav " id="market">
+                        <li class="btn" id="market1">ETH</li>
+                        <li class="btn " id="market2">LTC</li>
+                        <li class="btn " id="market3">BTC</li>
+                        <li class="btn " id="market4">CNY</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row cointocoinbg" style="margin-right:5px">
+                <div class="col-md-11" style="height:400px;width:90%;">
+                    <div id="market"></div>@*搜索币种 显示最新价成交额*@
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="row" style="height:100px;width:100%;">
+                @*该币种的名称 24h涨幅 价格*@
+            <div id="title"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <select class="form-control pull-left">
+                    <option value="0" selected="selected">分日图</option>
+                    <option value="1">分时图</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="row">
+            <div id="container" style="height:400px;width:100%;"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-md-12"><img src="~/img/AmountHeader.png" class="img-responsive" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="height:400px;width:100%;">
+                <div id="coin-amount" class="cointocoinbg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @*最新成交（市场 我的 费率）（时间 价格 成交量）*@
+    <div class="row" style="margin-right:5px">
+        <div class="col-md-11">
+            <ul class="nav navbar-nav ">
+                <li class="btn" id="marketamount">市场</li>
+                <li class="btn " id="myamount">我的</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row cointocoinbg" style="margin-right:5px">
+        <div class="col-md-12">
+            <div id="transaction"></div>
+        </div>
+    </div>
+</div>
+<div class="col-md-9">
+    <br />
+   <div class="row" style="margin-right:5px">
+        <div class="col-md-8 cointocoinbg" style="margin-right:5px" >
+      
+            @*买卖委托（限价 市场价）（买卖量 买卖价）*@
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row" >
+                    <div class="col-md-12" >
+
+                        <b>交易大厅</b>
+                    </div>
+                </div>
+                <div class="row" style="margin-right:5px">
+                    <div id="hall"></div>
+                </div>
+
+            </div>
+        </div>
+       </div>
+        <div class="col-md-3 cointocoinbg" >
+    @*挂单*@
+    @using (Html.BeginForm("AddEntrust", "CoinToCoin", FormMethod.Post, new { id = "entrust" }))
+            {
+        @Html.AntiForgeryToken();
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.EAmount, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.EAmount, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EAmount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Eprice, htmlAttributes: new { @class = "control-label col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Eprice, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Eprice, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="submit" class="btn btn-default" id="AddEntrust" value="发布"/>
+                    </div>
+                </div>
+
+
+    }
+</div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">@*当前委托*@
+    <b class="pull-left">当前委托</b>
+    <a href="@Url.Action("Index","EntrustDoc")" class="pull-right">>></a>
+    <hr />
+    <div id="nowEn" class="cointocoinbg"></div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">@*历史委托*@
+        <b class="pull-left">历史委托</b>
+        <a href="@Url.Action("Index","EntrustDoc")" class="pull-right"> >></a>
+        <hr />
+        <div id="historyEn" class="cointocoinbg"></div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript" src="~/Scripts/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+<script src="~/Scripts/shine.js"></script>
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrapplugin")
+
+   
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var $market = $('#market');
+            var coin="TTG/ETH";
+            var remainningAmount;
+            //交易对表，带动其他表变化
+            k();
+            ShowNowEn();
+            ShowHistoryEn();
+
+            $market.bootstrapTable({
+                onClickRow: function (row) {
+                    coin = row.CoinToCoin;
+                    $.post("@Url.Action("SaveCoin")",{_s:coin},function(){})
+                    k();
+                    ShowNowEn();
+                    ShowHistoryEn();
+
+                    //点击附加导航 刷新标题信息
+                    $.ajax(
+                 {
+                     type: "post",
+                     url: "@Url.Action("ListJson", "User")",
+                     data:{"s":coin},//ajax请求的data以"":""形式传入
+                     success: function (data1) {
+                         //要传入table的数据值
+                         //bootstrap-Table获取数据
+                         $title.bootstrapTable('load', data1);
+                         //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+                     },
+                     error: function () {
+                         alert("错误");
+                     }
+                 });
+                    $.ajax(
+              {
+                  type: "post",
+                  url: "@Url.Action("AmountInDay", "CoinToCoin")",
+                  data:{"cointocoin":coin},//ajax请求的data以"":""形式传入
+                  success: function (data1) {
+
+                      $amount.bootstrapTable('load', data1);
+                      //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+                  },
+                  error: function () {
+                      alert("错误");
+                  }
+              });
+                    $.ajax(
+                  {
+                      type: "post",
+                      url: "@Url.Action("Transaction", "CoinToCoin")",
+                      data:{"coinname":coin},//ajax请求的data以"":""形式传入
+                      success: function (data1) {
+
+                          $transaction.bootstrapTable('load', data1);
+                          //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+                      },
+                      error: function () {
+                          alert("错误");
+                      }
+                  });
+                    $.ajax(
+                {
+                    type: "post",
+                    url: "@Url.Action("ShowHall", "CoinToCoin")",
+                    data:{"coinname":coin},//ajax请求的data以"":""形式传入
+                    success: function (data1) {
+
+                        $hall.bootstrapTable('load', data1);
+                        //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+                    },
+                    error: function () {
+                        alert("错误");
+                    }
+                });
+
+
+                },
+                //showFooter: true,
+                method: "post",
+                url: "@Url.Action("ListJson","User", new { s = "ETH" })",
+                columns: [
+                    { title: "交易对", field: "CoinToCoin", width: "120px" },
+                    { title: "价格", field: "Price" ,formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                    { title: "24h成交量", field: "VolumeInDay" , width: "120px"},
+                ]
+            });
+
+            $("#market1").click(function () {
+
+                $.ajax(
+             {
+                 type: "post",@*mvc 默认jsonresult 只接收post请求，若要get 可在return json(..,JsonRequestBehavior.AllowGet)*@
+                 url:"@Url.Action("ListJson", "User", new { s = "ETH" })",
+                 contentType: 'application/json',
+                 dataType:"json",
+                 success:function(data){
+                     //要传入table的数据值
+                     //bootstrap-Table获取数据
+                     $market.bootstrapTable('load', data);
+                     //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+                 },
+                 error:function(){
+                     alert("错误");
+                 }
+             }
+       )
+            });
+            $("#market2").click(function () {
+                $.ajax(
+          {
+              type: "post",
+              url:"@Url.Action("ListJson", "User", new { s = "LTC" })",
+              contentType: 'application/json',
+              dataType:"json",
+              success:function(data){
+                  //要传入table的数据值
+                  //bootstrap-Table获取数据
+                  $market.bootstrapTable('load', data);
+                  //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+              },
+              error:function(){
+                  alert("错误");
+              }
+          }
+                )
+            })
+            $("#market3").click(function () {
+                $.ajax(
+          {
+              type: "post",
+              url:"@Url.Action("ListJson", "User", new { s = "BTC" })",
+              contentType: 'application/json',
+              dataType:"json",
+              success:function(data){
+                  //要传入table的数据值
+                  //bootstrap-Table获取数据
+                  $market.bootstrapTable('load', data);
+                  //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+              },
+              error:function(){
+                  alert("错误");
+              }
+          }
+              )
+            })
+            $("#market4").click(function () {
+                $.ajax(
+          {
+              type: "post",
+              url: "@Url.Action("ListJson", "User", new { s = "CNY" })",
+              contentType: 'application/json',
+              dataType: "json",
+              success: function (data) {
+                  //要传入table的数据值
+                  //bootstrap-Table获取数据
+                  $market.bootstrapTable('load', data);
+                  //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+              },
+              error: function () {
+                  alert("错误");
+              }
+          }
+              )
+            });
+
+            @*显示名称 24h最高价*@
+            var $title = $('#title');
+
+            $title.bootstrapTable({
+
+                //showFooter: true,
+                method: "post",
+                url: "@Url.Action("ListJson","User",new { s="TTG/ETH"})",
+                columns: [
+                    { title: "交易对", field: "CoinToCoin" },
+                   { title: "价格", field: "Price", width: "200px" },
+                    { title: "24h最高", field: "MaxInDay", width: "200px" },
+                    { title: "涨幅%", field: "Up", width: "200px" },
+                    { title: "24h最低", field: "MinInDay", width: "200px" },
+                    { title: "24h成交量", field: "VolumeInDay", width: "200px" },
+                    { title: "24h成交额", field: "AmountInDay", width: "200px" },
+
+                ]
+            });
+            //显示币种的成交量 价格
+            var $amount = $('#coin-amount');
+            $amount.bootstrapTable({
+                method: "post",
+
+                url:"@Url.Action("AmountInDay", "CoinToCoin", new { s="TTG/ETH"})",
+                columns: [
+                    { title: "时间", field: "KDateTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD") },width:"120px" },
+                    { title: "收盘价", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                    { title: "成交量", field: "Amount", width: "120px" }
+
+                ]
+            });
+            //显示成交情况
+
+            var $transaction = $('#transaction');
+            var $tra=$transaction.bootstrapTable({
+                method: "post",
+                url: "@Url.Action("Transaction","CoinToCoin",new{coinname="TTG/ETH",id=-1 })",
+                columns: [
+                  { title: "时间", field: "SuccessTime", formatter: function (value) { return moment(value).format("HH:mm:ss")},width: "120px" },
+                  { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                  { title: "成交量", field: "Amount", width: "120px" }
+
+                ]
+            });
+
+            $('#marketamount').click(function(){
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("Transaction", "CoinToCoin", new { coinname="TTG/ETH",id= -1})",
+                    contentType: 'application/json',
+                    dataType: "json",
+                    success: function(data) {
+                        //要传入table的数据值
+                        //bootstrap-Table获取数据
+                        $transaction.bootstrapTable('load', data);
+                        //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
+                    },
+                    error: function() {
+                        alert("错误");
+                    }
+                });
+            })
+            $('#myamount').click(function () {
+
+                if (@Context.Session["UserID"] != null) {
+
+                    $.ajax({
+                        type: "post",
+                        url: "@Url.Action("Transaction", "CoinToCoin", new { coinname="TTG/ETH",id= @Context.Session["UserID"] })",
+                        contentType: 'application/json',
+                        dataType: "json",
+                        success: function(data) {
+                            //要传入table的数据值
+                            //bootstrap-Table获取数据
+                            $transaction.bootstrapTable('load', data);
+
+                        },
+                        error: function() {
+                            alert("错误");
+                        }
+                    });
+                }
+
+            })
+            //显示交易大厅
+            var $hall=$('#hall');
+            $hall.bootstrapTable({
+                onClickRow:function(row){  $.post("@Url.Action("SaveID")",{id:row.ID,amount:row.RemainingAmount,entrusterID:row.EntrusterID},function(){})
+                    remainningAmount=row.RemainingAmount;
+                    if(row.EntrusterID==@int.Parse(Session["UserID"].ToString())) $.showSuccessTimeout("您的委托正在交易");
+
+                    else{
+                        var addDialog = new BootstrapDialog({
+                            title: "<span class='glyphicon glyphicon-plus'></span>买入",
+                            message: function (dialog) {
+                                var $message = $('<div></div>');
+                                var pageToLoad = dialog.getData('pageToLoad');
+                                $message.load(pageToLoad);
+
+                                return $message;
+                            },
+                            data: {
+                                'pageToLoad': '@Url.Action("AddSalePartialView")'
+
+                            },
+                            buttons: [{
+                                icon: "glyphicon glyphicon-plus",
+                                label: "购买",
+                                action: function (dialogItself) {
+                                    $.post($('#Buy').attr("action"), $('#Buy').serializeArray(), function (data) {
+
+                                        if (data.Code == 1) {
+                                            BootstrapDialog.show({
+                                                message: data.Message,
+                                                buttons: [{
+                                                    icon: "glyphicon glyphicon-ok",
+                                                    label: "确定",
+                                                    action: function (dialogItself) {
+                                                        $hall.bootstrapTable("refresh");
+                                                        dialogItself.close();
+                                                        addDialog.close();
+                                                    }
+                                                }]
+
+                                            });
+                                        }
+                                        else BootstrapDialog.alert(data.Message);
+                                    }, "json");
+                                    $('#Buy').validate();
+                                }
+                            }, {
+                                icon: "glyphicon glyphicon-remove",
+                                label: "取消",
+                                action: function (dialogItself) {
+                                    dialogItself.close();
+                                }
+                            }]
+                        });
+                        addDialog.open();}
+
+                    //购买结束
+                },
+                showRefesh:"true",
+                method: "post",
+                pagination: true,
+                sidePagination: "client",
+                pageList:"[10]",
+                url:"@Url.Action("ShowHall", "CoinToCoin", new { coinname="TTG/ETH"})",
+                columns: [
+                    {title:"委托单号",field:"ID",width: "120px"},
+                { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
+                { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                { title: "委托人ID", field: "EntrusterID", width: "120px" },
+                { title: "总量", field: "TotalAmount", width: "120px" },
+                { title: "已出售", field: "SelledAmount", width: "120px" },
+                { title: "剩余", field: "RemainingAmount", width: "120px" },
+                 { title: " ", field: "", width: "120px",formatter: function (value, row, index) { return '<a><span style="color:red">购买</span></a>' }}
+                ]
+            });
+         
+
+
+            ////委托发布
+            //$("#entrust").submit(function(){
+            //    var addDialog = new BootstrapDialog({
+            //        title: '发布 ',
+            //        message: "要发布该委托吗？",
+            //        buttons: [{
+            //            label: '确定',
+            //            action: function (dialogItself) {
+                           
+            //                $.post($('#entrust').attr("action"), $('#entrust').serializeArray(), function (data) {
+                                     
+            //                    if (data.Code == 1) {
+            //                        BootstrapDialog.show({
+            //                            message: data.Message,
+            //                            buttons: [{
+            //                                icon: "glyphicon glyphicon-ok",
+            //                                label: "确定",
+            //                                action: function (dialogItself) {
+            //                                    $hall.bootstrapTable("refresh");
+            //                                    dialogItself.close();
+            //                                    addDialog.close();
+            //                                }
+            //                            }]
+
+            //                        });
+
+            //                        }})
+                           
+            //            }
+            //        }],
+            //    });
+            //    addDialog.open();});
+            //成功提示框
+            $.showSuccessTimeout = function(str, func) {
+                BootstrapDialog.show({
+                    type : BootstrapDialog.TYPE_SUCCESS,
+                    title : '成功 ',
+                    message : str,
+                    size : BootstrapDialog.SIZE_SMALL,
+                    buttons : [ {
+                        label : '确定',
+                        action : function(dialogItself) {
+                            dialogItself.close();
+                        }
+                    } ],
+                    // 指定时间内可自动关闭
+                    onshown : function(dialogRef) {
+                        setTimeout(function() {
+                            dialogRef.close();
+                        }, YUNM._set.timeout);
+                    },
+                    onhide : func
+                });
+            };
+            //委托发布情况
+
+            if(@ViewBag.Success==1) $.showSuccessTimeout("发布成功");
+            else if(@ViewBag.Success==-1) $.showSuccessTimeout("持有货币不足");
+            //显示当前委托
+            function ShowNowEn(){
+                $.post("@Url.Action("SaveCoin")",{_s:coin},function(){})
+                var $nowEn=$('#nowEn');
+                $nowEn.bootstrapTable({
+                    method:"post",
+                    url:"@Url.Action("NowEn")",
+                    columns:[
+                        {title:"委托单号",field:"ID" ,width: "160px"},
+                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
+                    { title: "交易对", field: "CoinToCoin", width: "160px" },
+                    { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "160px" },
+
+                    { title: "总量", field: "TotalAmount", width: "160px" },
+                    { title: "已出售", field: "SelledAmount", width: "120px" },
+                    { title: "剩余", field: "RemainingAmount", width: "120px" },
+                     { title: "状态", field: "IsSuccess", formatter:function(value) {  return value = "正在交易中"; } }
+
+                    ]
+
+                });}
+            //显示历史委托
+            function ShowHistoryEn(){
+                $.post("@Url.Action("SaveCoin")",{_s:coin},function(){})
+                var $heistoryEn=$('#historyEn');
+                $heistoryEn.bootstrapTable({
+                    method:"post",
+                    url:"@Url.Action("HistoryEn")",
+                    columns:[
+                        {title:"委托单号",field:"ID", width: "160px" },
+                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
+                      { title: "交易对", field: "CoinToCoin", width: "160px" },
+                    { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "160px" },
+
+                    { title: "总量", field: "TotalAmount", width: "160px" },
+                    { title: "已出售", field: "SelledAmount", width: "120px" },
+                    { title: "剩余", field: "RemainingAmount", width: "120px" },
+                       { title: "状态", field: "IsSuccess", formatter:function(value) { if (value == -1) return value = "已撤销"; if (value == 1) return value = "已成交"; if (value == 0) return value = "正在交易中"; } }
+                    ]
+                })};
+            //时间戳转换成日期
+            function getLocalTime(nS, type) {
+                /*
+                 * nS:为传进来的时间戳
+                 * type:时间显示模式.若传入12则为12小时制,不传入则为24小时制
+                 */
+                //年月日时分秒
+                var Y, M, D, W, H, I, S;
+                //月日时分秒为单位时前面补零
+                function fillZero(v) {
+                    if (v < 10) { v = '0' + v; }
+                    return v;
+                }
+                var d = new Date(parseInt(nS / 1000) * 1000);
+                var Week = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                Y = d.getFullYear();
+                M = fillZero(d.getMonth() + 1);
+                D = fillZero(d.getDate());
+                W = Week[d.getDay()];
+                H = fillZero(d.getHours());
+                I = fillZero(d.getMinutes());
+                S = fillZero(d.getSeconds());
+                //12小时制显示模式
+                if (type && type == 12) {
+                    //若要显示更多时间类型诸如中午凌晨可在下面添加判断
+                    if (H <= 12) {
+                        H = '上午&nbsp;' + H;
+                    } else if (H > 12 && H < 24) {
+                        H -= 12;
+                        H = '下午&nbsp;' + fillZero(H);
+                    } else if (H == 24) {
+                        H = '下午&nbsp;00';
+                    }
+                }
+                var localTime = Y + '年' + M + '月' + D + '日 ';//+ H + ':' + I + ':' + S
+                //    console.log(localTime);
+                return localTime;
+                //每秒更新时间
+                // setTimeout(arguments.callee,1000);
+            }
+            @*$('#Entrust').click(function(){
+                $.post("@Url.Action("AddEntrust")",{addEntrust},function(data){
+                    $.showSuccessTimeout(data.Message);
+                })
+
+            })*@
+            function k(){
+                var dom = document.getElementById("container");
+                var myChart = echarts.init(dom,'shine');
+                var app = {};
+                option = null;
+                //var upColor = '#d75442';
+                //var downColor = '#6ba583';
+                //var upColor = '#00da3c';
+                //var downColor = '#ec0000';
+                var upColor ="red";
+                var downColor ="green";
+
+                function splitData(rawData) {
+                    var categoryData = [];
+                    var values = [];
+                    var volumes = [];
+                    for (var i = 0; i < rawData.length; i++) {
+                        var date = rawData[i].KDateTime;
+                        var timestamp = date.substring(6, date.length - 2);
+                        //getLocalTime(timestamp);
+                        categoryData.push( getLocalTime(timestamp));//添加时间戳转化后的时间
+                        values.push([rawData[i].OpeningPrice, rawData[i].ClosingPrice, rawData[i].MaxPrice, rawData[i].MinPrice]);//直接添加数组进去
+                        volumes.push(rawData[i].Amount);
+                        //categoryData.push(getLocalTime(rawData[i].splice(0, 1)[0]));
+                        //values.push(rawData[i]);
+                        //volumes.push([i, rawData[i][4], rawData[i][0] > rawData[i][1] ? 1 : -1]);
+                    }
+
+                    return {
+                        categoryData: categoryData,
+                        values: values,
+                        volumes: volumes
+                    };
+                }
+
+                function calculateMA(dayCount, data) {
+                    var result = [];
+                    for (var i = 0, len = data.values.length; i < len; i++) {
+                        if (i < dayCount) {
+                            result.push('-');
+                            continue;
+                        }
+                        var sum = 0;
+                        for (var j = 0; j < dayCount; j++) {
+                            sum += data.values[i - j][1];
+                        }
+                        result.push(+(sum / dayCount).toFixed(3));
+                    }
+                    return result;
+                }
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("DayK")",
+                    data: { "cointocoin":coin },
+                    success: function (rawData) {
+
+                        var data = splitData(rawData);
+                        myChart.setOption(option = {
+                            backgroundColor: '#eee',
+                            animation: false,
+                            legend: {
+                                bottom: 10,
+                                left: 'center',
+                                data: ['k', 'MA', 'MA5', 'MA10', 'MA20', 'MA30']
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    type: 'cross'
+                                },
+                                backgroundColor: '#fff',
+                                borderWidth: 1,
+                                borderColor: '#fff',
+                                padding: 10,
+                                textStyle: {
+                                    color: '#000'
+                                },
+                                position: function (pos, params, el, elRect, size) {
+                                    var obj = { top: 10 };
+                                    obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                                    return obj;
+                                }
+                                // extraCssText: 'width: 170px'
+                            },
+                            axisPointer: {
+                                link: { xAxisIndex: 'all' },
+                                label: {
+                                    backgroundColor: '#777'
+
+                                }
+                            },
+                            toolbox: {
+                                feature: {
+                                    dataZoom: {
+                                        yAxisIndex: false
+                                    },
+                                    brush: {
+                                        type: ['lineX', 'clear']
+                                    }
+                                }
+                            },
+                            brush: {
+                                xAxisIndex: 'all',
+                                brushLink: 'all',
+                                outOfBrush: {
+                                    colorAlpha: 0.1
+                                }
+                            },
+                            visualMap: {
+                                show: false,
+                                seriesIndex: 5,
+                                dimension: 2,
+                                pieces: [{
+                                    value: 1,
+                                    color: downColor
+                                }, {
+                                    value: -1,
+                                    color: upColor
+                                }]
+                            },
+                            grid: [
+                                {
+                                    left: '10%',
+                                    right: '8%',
+                                    height: '50%'
+                                },
+                                {
+                                    left: '10%',
+                                    right: '8%',
+                                    top: '63%',
+                                    height: '16%'
+                                }
+                            ],
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: data.categoryData,
+                                    scale: true,
+                                    boundaryGap: false,
+                                    axisLine: { onZero: false },
+                                    splitLine: { show: false },
+                                    splitNumber: 20,
+                                    min: 'dataMin',
+                                    max: 'dataMax',
+                                    axisPointer: {
+                                        z: 100
+                                    }
+                                },
+                                {
+                                    type: 'category',
+                                    gridIndex: 1,
+                                    data: data.categoryData,
+                                    scale: true,
+                                    boundaryGap: false,
+                                    axisLine: { onZero: false },
+                                    axisTick: { show: false },
+                                    splitLine: { show: false },
+                                    axisLabel: { show: false },
+                                    splitNumber: 20,
+                                    min: 'dataMin',
+                                    max: 'dataMax'
+                                    // axisPointer: {
+                                    //     label: {
+                                    //         formatter: function (params) {
+                                    //             var seriesValue = (params.seriesData[0] || {}).value;
+                                    //             return params.value
+                                    //             + (seriesValue != null
+                                    //                 ? '\n' + echarts.format.addCommas(seriesValue)
+                                    //                 : ''
+                                    //             );
+                                    //         }
+                                    //     }
+                                    // }
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    scale: true,
+                                    splitArea: {
+                                        show: true
+                                    }
+                                },
+                                {
+                                    scale: true,
+                                    gridIndex: 1,
+                                    splitNumber: 2,
+                                    axisLabel: { show: false },
+                                    axisLine: { show: false },
+                                    axisTick: { show: false },
+                                    splitLine: { show: false }
+                                }
+                            ],
+                            dataZoom: [
+                                {
+                                    type: 'inside',
+                                    xAxisIndex: [0, 1],
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    xAxisIndex: [0, 1],
+                                    type: 'slider',
+                                    top: '85%',
+                                    start: 0,
+                                    end: 100
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: 'k',
+                                    type: 'candlestick',
+                                    data: data.values,
+                                    itemStyle: {
+                                        normal: {
+                                            color: upColor,
+                                            color0: downColor,
+                                            borderColor: null,
+                                            borderColor0: null
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function (param) {
+                                            param = param[0];
+                                            return [
+                                                'Date: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                                                '开盘价: ' + param.data[0] + '<br/>',
+                                                '收盘价: ' + param.data[1] + '<br/>',
+                                                '最低价: ' + param.data[2] + '<br/>',
+                                                '最高价: ' + param.data[3] + '<br/>'
+                                            ].join('');
+                                        }
+                                    }
+                                },
+                                 {
+                                     name: 'MA1',
+                                     type: 'line',
+                                     data: calculateMA(1, data),
+                                     smooth: true,
+                                     lineStyle: {
+                                         normal: { opacity: 0.5 }
+                                     }
+                                 },
+                                {
+                                    name: 'MA5',
+                                    type: 'line',
+                                    data: calculateMA(5, data),
+                                    smooth: true,
+                                    lineStyle: {
+                                        normal: { opacity: 0.5 }
+                                    }
+                                },
+                                {
+                                    name: 'MA10',
+                                    type: 'line',
+                                    data: calculateMA(10, data),
+                                    smooth: true,
+                                    lineStyle: {
+                                        normal: { opacity: 0.5 }
+                                    }
+                                },
+                                {
+                                    name: 'MA20',
+                                    type: 'line',
+                                    data: calculateMA(20, data),
+                                    smooth: true,
+                                    lineStyle: {
+                                        normal: { opacity: 0.5 }
+                                    }
+                                },
+                                {
+                                    name: 'MA30',
+                                    type: 'line',
+                                    data: calculateMA(30, data),
+                                    smooth: true,
+                                    lineStyle: {
+                                        normal: { opacity: 0.5 }
+                                    }
+                                },
+                                {
+                                    name: 'Volume',
+                                    type: 'bar',
+                                    xAxisIndex: 1,
+                                    yAxisIndex: 1,
+                                    data: data.volumes
+                                }
+                            ]
+                        }, true);
+
+
+                        myChart.dispatchAction({
+                            type: 'brush',
+                            areas: [
+                                {
+                                    brushType: 'lineX',
+                                    coordRange: ['2018-06-02', '2018-08-20'],
+                                    xAxisIndex: 0
+                                }
+                            ]
+                        });
+                    }
+                });
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+
+            }
+
+
+        });
+    </script>
+}
+
+
+
+

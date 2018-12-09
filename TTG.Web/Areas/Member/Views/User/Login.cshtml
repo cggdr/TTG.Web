@@ -1,0 +1,33 @@
+﻿@model TTG.Web.Areas.Member.Models.LoginViewModel
+
+    <div class="body-content container main-content">
+        <div class="col-md-7"><img src="~/img/LoginSidePic.png" class="img-responsive" /></div>
+        <div class="col-md-5">
+            <div class="loginform">
+                <div class="form-horizontal">
+                    <h2 class="text-primary">登录</h2>
+                    <div style="width:280px;height:auto">
+                    @using (Html.BeginForm())
+            {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group form-group-lg">
+                            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "用户名" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group form-group-lg">
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "密码" } })
+                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group form-group-lg">
+                            <input type="submit" value="登录" class="btn btn-default btn-lg" style="background-color:forestgreen;width:280px"/>
+                        </div>
+
+                    } 
+                    <a href="@Url.Action("ForgetPassword","User")" class="pull-left">忘记密码？</a>@*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@<a href="@Url.Action("Register","User")" class="pull-right">立即注册</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>

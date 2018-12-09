@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "我的账单";
+}
+<div class="row main-content">
+    <div class="col-md-3">
+
+        @Html.Partial("SideNav")
+
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-12">
+            <h5>充值记录</h5>
+            <div id="In"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                 <div class="row">
+            <div class="col-md-12">
+                <h5>提取记录</h5>
+                <div id="Out"></div>
+            </div>
+        </div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrapplugin")
+    <script>
+        $(document).ready(function () {
+            var $In = $('#In');
+            $In.bootstrapTable({
+                method: "post",
+                pagination: true,
+                sidePagination: "client",
+                pageList:[5,10],
+                url: "@Url.Action("Interaction","PersonalCenter",new { id=1})",
+                columns: [
+                    { "title": "时间", "field": "OperatingTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD HH:mm:ss") }, width: 160 },
+                    { "title": "货币名称", "field": "CoinName", width: 160 },
+                    { "title": "钱包地址", "field": "WalletAddress", width: 160 },
+                    { "title": "数量", "field": "Amount", width: 160 },
+                    { "title": "状态", "field": "Status", formatter: function (value) { if (value == -1) return value = "失败"; if (value == 0) return value = "审核中"; if (value == 1) return value = "成功"; } , width: 160},
+                ]
+            });
+
+            var $out = $('#Out');
+            $out.bootstrapTable({
+
+                method: "post",
+                pagination: true,
+                sidePagination: "client",
+                pageList:"[5,10]",
+                url: "@Url.Action("Interaction","PersonalCenter",new { id=-1})",
+                columns: [
+                    { "title": "时间", "field": "OperatingTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD HH:mm:ss") }, width: 160 },
+                    { "title": "货币名称", "field": "CoinName", width: 160 },
+                    { "title": "钱包地址", "field": "WalletAddress", width: 160 },
+                    { "title": "数量", "field": "Amount", width: 160 },
+                    { "title": "状态", "field": "Status", formatter: function (value) { if (value == -1) return value = "失败"; if (value == 0) return value = "审核中"; if(value==1) return value = "成功"; } ,width: 160, },
+                ]                                          
+        });
+
+
+    })
+    </script>
+    }
