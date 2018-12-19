@@ -12,7 +12,7 @@ namespace TTG.Core
         public int FindVirID (string coinname)
         {
           
-            var _where = PredicateBuilder.True<VirtualCurrency>();
+            var _where = PredicateBuilder.New<VirtualCurrency>();
 
 
             return Repository.Find(u => u.Name == coinname).VirCurID;

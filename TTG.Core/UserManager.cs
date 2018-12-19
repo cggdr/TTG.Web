@@ -2,6 +2,7 @@
 using TTG.Helper;
 using LinqKit;
 using System;
+using System.Data.Entity;
 
 namespace TTG.Core
 {
@@ -235,6 +236,14 @@ namespace TTG.Core
             return _resp;
         }
 
+        public int LoginUser(int i)
+        {
+            var _where = PredicateBuilder.New<User>();
+
+            _where.And(p => DbFunctions.DiffDays(p.LastLoginTime, DateTime.Now) < 24 * i);
+            if(i!=0)  _where.And(p => DbFunctions.DiffDays(p.LastLoginTime, DateTime.Now) >24 * (i-1));
+            return this.FindList(_where).ToList().Count();
+        }
         
       
     }

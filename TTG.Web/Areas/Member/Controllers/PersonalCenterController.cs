@@ -18,6 +18,7 @@ namespace TTG.Web.Areas.Member.Controllers
         private WalletManager _wallet = new WalletManager();
         private VirtualCurrencyManager _vir = new VirtualCurrencyManager();
         private InteractionManager _interaction = new InteractionManager();
+        private UserIdentyManager _indenty = new UserIdentyManager();
         private static int WalletID;
         private static double Amount;
         public ActionResult SaveWalletID(int id,double amount)
@@ -161,7 +162,8 @@ namespace TTG.Web.Areas.Member.Controllers
         public ActionResult ChangeTransactionPw()
         {
             User user = _user.Find(int.Parse(Session["UserID"].ToString()));
-            if (user.UserIdenty.Password == null) ViewBag.Message = "<div class=\"alert alert-warninig\" role=\"alert\"><span class=\"glyphicon glyphicon-star-empty\"></span>设置交易密码(两次密码一致)</div>";
+            
+            if (string.IsNullOrEmpty(_indenty.Find(user.FKIdentyID).Password)) ViewBag.Message = "<div class=\"alert alert-warninig\" role=\"alert\"><span class=\"glyphicon glyphicon-star-empty\"></span>设置交易密码(两次密码一致)</div>";
             else ViewBag.Message = "<div class=\"alert alert-warning\" role=\"alert\"><span class=\"glyphicon glyphicon-star\"></span>修改交易密码</div>";
             return View();
         }
@@ -170,25 +172,27 @@ namespace TTG.Web.Areas.Member.Controllers
         public ActionResult ChangeTransactionPw(ChangePWViewModel cpw)
         {
             User user = _user.Find(int.Parse(Session["UserID"].ToString()));
-         string kkk = user.UserIdenty.Password;
-            if (Security.SHA256(cpw.Password) != user.UserIdenty.Password) { ViewBag.Message = "<div class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-remove\"></span>与原来的密码不一致</div>"; return View(cpw); }
-            if (ModelState.IsValid)
+            Response _res = new Helper.Response();
+            if (string.IsNullOrEmpty(_indenty.Find(user.FKIdentyID).Password))
             {
-
-                Response _res = new Helper.Response();
-                if (Security.SHA256(cpw.ConfirmPassword) != user.UserIdenty.Password)
-                {
-                    _res = _user.ChangeTransactionPassword(user.UserID, Security.SHA256(cpw.ConfirmPassword));
-                    if (_res.Code == 1) { ViewBag.Message = "<div class=\"alert alert-success\" role=\"alert\"><span class=\"glyphicon glyphicon-ok\"></span>修改密码成功！</div>"; }
-                    else ViewBag.Message = "<div class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-remove\"></span>修改密码失败！</div>";
-                }
-                else if(Security.SHA256(cpw.ConfirmPassword) == user.UserIdenty.Password)
+                if (ModelState.IsValid)
                 {
                     _res = _user.ChangeTransactionPassword(user.UserID, Security.SHA256(cpw.ConfirmPassword));
                     if (_res.Code == 1) { ViewBag.Message = "<div class=\"alert alert-success\" role=\"alert\"><span class=\"glyphicon glyphicon-ok\"></span>设置交易密码成功！</div>"; }
-                    else ViewBag.Message = "<div class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-remove\"></span>设置交易密码失败！</div>";
+                    else ViewBag.Message = "<div class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-remove\"></span>设置交易密码失败</div>";
                 }
             }
+            else
+            {
+                if (Security.SHA256(cpw.Password) != _indenty.Find(user.FKIdentyID).Password) { ViewBag.Message = "<div class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-remove\"></span>与原来的密码不一致</div>"; return View(cpw); }
+                if (ModelState.IsValid)
+                {
+                        _res = _user.ChangeTransactionPassword(user.UserID, Security.SHA256(cpw.ConfirmPassword));
+                        if (_res.Code == 1) { ViewBag.Message = "<div class=\"alert alert-success\" role=\"alert\"><span class=\"glyphicon glyphicon-ok\"></span>修改密码成功！</div>"; }
+                        else ViewBag.Message = "<div class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-remove\"></span>修改密码失败！</div>";
+                }
+            }
+
             return View(cpw);
         }
     }

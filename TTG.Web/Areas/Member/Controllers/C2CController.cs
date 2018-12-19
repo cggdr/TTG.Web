@@ -9,6 +9,7 @@ using TTG.Web.Areas.Member.Models;
 
 namespace TTG.Web.Areas.Member.Controllers
 {
+    [UserAuthorize]
     public class C2CController : Controller
     {
         private WalletManager _wallet = new WalletManager();

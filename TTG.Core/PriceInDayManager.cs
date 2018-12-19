@@ -11,10 +11,10 @@ namespace TTG.Core
     {
         public List<PriceInDay> FindList(string _s)
         {
-            var _where = PredicateBuilder.True<PriceInDay>();
+            var _where = PredicateBuilder.New<PriceInDay>();
             _where = _where.And(u => u.CoinToCoin.Contains(_s));
           
-            List<PriceInDay> pd=Repository.FindList(_where.Expand()).ToList();
+            List<PriceInDay> pd=Repository.FindList(_where).ToList();
             return pd;
         }
        

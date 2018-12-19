@@ -22,7 +22,7 @@ namespace TTG.Web.Areas.Member.Controllers
         private VirtualCurrencyManager virManager = new VirtualCurrencyManager();
         private WalletManager walletManager = new WalletManager();
         private ApplicationManager applicationManager = new ApplicationManager();
-
+        
         [HttpPost]
         [AllowAnonymous]
         public JsonResult CanUserName(string UserName)
@@ -144,7 +144,7 @@ namespace TTG.Web.Areas.Member.Controllers
             //账号
             string account = "15170028673";
             //密码
-            string pswd = "cg123123..";
+            string pswd = "cg..123123";
             //修改为您要发送的手机号
             string mobile = phoneNum;
             // 短信发送接口的http地址，请咨询客服

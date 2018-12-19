@@ -26,15 +26,7 @@
                 @*该币种的名称 24h涨幅 价格*@
             <div id="title"></div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <select class="form-control pull-left">
-                    <option value="0" selected="selected">分日图</option>
-                    <option value="1">分时图</option>
-                </select>
-
-            </div>
-        </div>
+       
         <div class="row">
             <div id="container" style="height:400px;width:100%;"></div>
         </div>
@@ -78,7 +70,7 @@
                 <div class="row" >
                     <div class="col-md-12" >
 
-                        <b>交易大厅</b>
+                        <b>交易大厅(@ViewBag.cointocoin)</b>
                     </div>
                 </div>
                 <div class="row" style="margin-right:5px">
@@ -160,89 +152,35 @@
             var $market = $('#market');
             var coin="TTG/ETH";
             var remainningAmount;
-            //交易对表，带动其他表变化
-            k();
-            ShowNowEn();
-            ShowHistoryEn();
 
+            function initCTC(){
+                k();
+                ShowTitle();
+                ShowNowEn();
+                ShowHistoryEn();
+                ShowHall();
+                ShowAmount();
+                ShowTransaction();
+            }
+            initCTC();
             $market.bootstrapTable({
                 onClickRow: function (row) {
                     coin = row.CoinToCoin;
                     $.post("@Url.Action("SaveCoin")",{_s:coin},function(){})
-                    k();
-                    ShowNowEn();
-                    ShowHistoryEn();
-
+                    //交易对表，带动其他表变化
+                    initCTC();
                     //点击附加导航 刷新标题信息
-                    $.ajax(
-                 {
-                     type: "post",
-                     url: "@Url.Action("ListJson", "User")",
-                     data:{"s":coin},//ajax请求的data以"":""形式传入
-                     success: function (data1) {
-                         //要传入table的数据值
-                         //bootstrap-Table获取数据
-                         $title.bootstrapTable('load', data1);
-                         //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
-                     },
-                     error: function () {
-                         alert("错误");
-                     }
-                 });
-                    $.ajax(
-              {
-                  type: "post",
-                  url: "@Url.Action("AmountInDay", "CoinToCoin")",
-                  data:{"cointocoin":coin},//ajax请求的data以"":""形式传入
-                  success: function (data1) {
-
-                      $amount.bootstrapTable('load', data1);
-                      //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
-                  },
-                  error: function () {
-                      alert("错误");
-                  }
-              });
-                    $.ajax(
-                  {
-                      type: "post",
-                      url: "@Url.Action("Transaction", "CoinToCoin")",
-                      data:{"coinname":coin},//ajax请求的data以"":""形式传入
-                      success: function (data1) {
-
-                          $transaction.bootstrapTable('load', data1);
-                          //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
-                      },
-                      error: function () {
-                          alert("错误");
-                      }
-                  });
-                    $.ajax(
-                {
-                    type: "post",
-                    url: "@Url.Action("ShowHall", "CoinToCoin")",
-                    data:{"coinname":coin},//ajax请求的data以"":""形式传入
-                    success: function (data1) {
-
-                        $hall.bootstrapTable('load', data1);
-                        //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
-                    },
-                    error: function () {
-                        alert("错误");
-                    }
-                });
-
 
                 },
-                //showFooter: true,
-                method: "post",
-                url: "@Url.Action("ListJson","User", new { s = "ETH" })",
-                columns: [
-                    { title: "交易对", field: "CoinToCoin", width: "120px" },
-                    { title: "价格", field: "Price" ,formatter: function (value) { return value.toFixed(8) }, width: "120px" },
-                    { title: "24h成交量", field: "VolumeInDay" , width: "120px"},
-                ]
-            });
+                    //showFooter: true,
+                    method: "post",
+                    url: "@Url.Action("ListJson","User", new { s = "ETH" })",
+                    columns: [
+                        { title: "交易对", field: "CoinToCoin", width: "120px" },
+                        { title: "价格", field: "Price" ,formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                        { title: "24h成交量", field: "VolumeInDay" , width: "120px"},
+                    ]
+                });
 
             $("#market1").click(function () {
 
@@ -323,167 +261,153 @@
             });
 
             @*显示名称 24h最高价*@
-            var $title = $('#title');
+            function ShowTitle(){
+                var $title = $('#title');
+                $title.bootstrapTable('refresh');
+                $title.bootstrapTable({
 
-            $title.bootstrapTable({
+                    //showFooter: true,
+                    method: "post",
+                    url: "@Url.Action("ListJson","CoinToCoin")",
+                    columns: [
+                        { title: "交易对", field: "CoinToCoin" },
+                       { title: "最新价格", field: "Price", width: "200px" },
+                        { title: "24h最高", field: "MaxInDay", width: "200px" },
+                        { title: "涨幅%", field: "Up", width: "200px",formatter: function (value) { return (Math.round(value * 10000) / 100).toFixed(2) + '%'; }},
+                        { title: "24h最低", field: "MinInDay", width: "200px" },
+                        { title: "24h成交量", field: "VolumeInDay", width: "200px" },
+                        { title: "24h成交额", field: "AmountInDay", width: "200px" },
 
-                //showFooter: true,
-                method: "post",
-                url: "@Url.Action("ListJson","User",new { s="TTG/ETH"})",
-                columns: [
-                    { title: "交易对", field: "CoinToCoin" },
-                   { title: "价格", field: "Price", width: "200px" },
-                    { title: "24h最高", field: "MaxInDay", width: "200px" },
-                    { title: "涨幅%", field: "Up", width: "200px" },
-                    { title: "24h最低", field: "MinInDay", width: "200px" },
-                    { title: "24h成交量", field: "VolumeInDay", width: "200px" },
-                    { title: "24h成交额", field: "AmountInDay", width: "200px" },
-
-                ]
-            });
-            //显示币种的成交量 价格
-            var $amount = $('#coin-amount');
-            $amount.bootstrapTable({
-                method: "post",
-
-                url:"@Url.Action("AmountInDay", "CoinToCoin", new { s="TTG/ETH"})",
-                columns: [
-                    { title: "时间", field: "KDateTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD") },width:"120px" },
-                    { title: "收盘价", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
-                    { title: "成交量", field: "Amount", width: "120px" }
-
-                ]
-            });
-            //显示成交情况
-
-            var $transaction = $('#transaction');
-            var $tra=$transaction.bootstrapTable({
-                method: "post",
-                url: "@Url.Action("Transaction","CoinToCoin",new{coinname="TTG/ETH",id=-1 })",
-                columns: [
-                  { title: "时间", field: "SuccessTime", formatter: function (value) { return moment(value).format("HH:mm:ss")},width: "120px" },
-                  { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
-                  { title: "成交量", field: "Amount", width: "120px" }
-
-                ]
-            });
-
-            $('#marketamount').click(function(){
-                $.ajax({
-                    type: "post",
-                    url: "@Url.Action("Transaction", "CoinToCoin", new { coinname="TTG/ETH",id= -1})",
-                    contentType: 'application/json',
-                    dataType: "json",
-                    success: function(data) {
-                        //要传入table的数据值
-                        //bootstrap-Table获取数据
-                        $transaction.bootstrapTable('load', data);
-                        //finishingTask为table的id $("#finishingTask").bootstrapTable('load',data);
-                    },
-                    error: function() {
-                        alert("错误");
-                    }
+                    ]
                 });
-            })
-            $('#myamount').click(function () {
+            }
+            //显示币种的成交量 价格
+            function ShowAmount(){
+                var $amount = $('#coin-amount');
+                $amount.bootstrapTable('refresh');
+                $amount.bootstrapTable({
+                    method: "post",
+                    url:"@Url.Action("AmountInDay", "CoinToCoin")",
+                    columns: [
+                        { title: "时间", field: "KDateTime", formatter: function (value) { return moment(value).format("YYYY-MM-DD") },width:"120px" },
+                        { title: "收盘价", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                        { title: "成交量", field: "Amount", width: "120px" }
 
-                if (@Context.Session["UserID"] != null) {
+                    ]
+                });
+            }
+            //显示成交情况
+            function ShowTransaction(){
+                var $transaction = $('#transaction');
+                $transaction.bootstrapTable('refresh');
+                var $tra=$transaction.bootstrapTable({
+                    method: "post",
+                    url: "@Url.Action("Transaction","CoinToCoin",new{id=-1 })",
+                    columns: [
+                      { title: "时间", field: "SuccessTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH:mm:ss")},width: "120px" },
+                      { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                      { title: "成交量", field: "Amount", width: "120px" }
 
-                    $.ajax({
-                        type: "post",
-                        url: "@Url.Action("Transaction", "CoinToCoin", new { coinname="TTG/ETH",id= @Context.Session["UserID"] })",
-                        contentType: 'application/json',
-                        dataType: "json",
-                        success: function(data) {
-                            //要传入table的数据值
-                            //bootstrap-Table获取数据
-                            $transaction.bootstrapTable('load', data);
+                    ]
+                });
 
-                        },
-                        error: function() {
-                            alert("错误");
+
+                $('#marketamount').click(function(){
+                    $.post("@Url.Action("Transaction", "CoinToCoin", new { id= -1})",function(data){
+                        $transaction.bootstrapTable('load', data);
+                    });
+                   
+
+                    $('#myamount').click(function () {
+
+                        if (@Context.Session["UserID"] != null) {
+                            $.post("@Url.Action("Transaction", "CoinToCoin", new { id= @Context.Session["UserID"] })",function(data){
+                                $transaction.bootstrapTable('load', data);
+                            });
                         }
                     });
-                }
-
-            })
+                  
+                })
+            }
             //显示交易大厅
-            var $hall=$('#hall');
-            $hall.bootstrapTable({
-                onClickRow:function(row){  $.post("@Url.Action("SaveID")",{id:row.ID,amount:row.RemainingAmount,entrusterID:row.EntrusterID},function(){})
-                    remainningAmount=row.RemainingAmount;
-                    if(row.EntrusterID==@int.Parse(Session["UserID"].ToString())) $.showSuccessTimeout("您的委托正在交易");
+            function ShowHall(){
+                var $hall=$('#hall');
+                $hall.bootstrapTable('refresh');
+                $hall.bootstrapTable({
+                    onClickRow:function(row){  $.post("@Url.Action("SaveID")",{id:row.ID,amount:row.RemainingAmount,entrusterID:row.EntrusterID,entrustID:row.ID},function(){})
+                        remainningAmount=row.RemainingAmount;
+                        if(row.EntrusterID==@int.Parse(Session["UserID"].ToString())) $.showSuccessTimeout("您的委托正在交易");
 
-                    else{
-                        var addDialog = new BootstrapDialog({
-                            title: "<span class='glyphicon glyphicon-plus'></span>买入",
-                            message: function (dialog) {
-                                var $message = $('<div></div>');
-                                var pageToLoad = dialog.getData('pageToLoad');
-                                $message.load(pageToLoad);
+                        else{
+                            var addDialog = new BootstrapDialog({
+                                title: "<span class='glyphicon glyphicon-plus'></span>买入",
+                                message: function (dialog) {
+                                    var $message = $('<div></div>');
+                                    var pageToLoad = dialog.getData('pageToLoad');
+                                    $message.load(pageToLoad);
 
-                                return $message;
-                            },
-                            data: {
-                                'pageToLoad': '@Url.Action("AddSalePartialView")'
+                                    return $message;
+                                },
+                                data: {
+                                    'pageToLoad': '@Url.Action("AddSalePartialView")'
 
-                            },
-                            buttons: [{
-                                icon: "glyphicon glyphicon-plus",
-                                label: "购买",
-                                action: function (dialogItself) {
-                                    $.post($('#Buy').attr("action"), $('#Buy').serializeArray(), function (data) {
+                                },
+                                buttons: [{
+                                    icon: "glyphicon glyphicon-plus",
+                                    label: "购买",
+                                    action: function (dialogItself) {
+                                        $.post($('#Buy').attr("action"), $('#Buy').serializeArray(), function (data) {
 
-                                        if (data.Code == 1) {
-                                            BootstrapDialog.show({
-                                                message: data.Message,
-                                                buttons: [{
-                                                    icon: "glyphicon glyphicon-ok",
-                                                    label: "确定",
-                                                    action: function (dialogItself) {
-                                                        $hall.bootstrapTable("refresh");
-                                                        dialogItself.close();
-                                                        addDialog.close();
-                                                    }
-                                                }]
+                                            if (data.Code == 1) {
+                                                BootstrapDialog.show({
+                                                    message: data.Message,
+                                                    buttons: [{
+                                                        icon: "glyphicon glyphicon-ok",
+                                                        label: "确定",
+                                                        action: function (dialogItself) {
+                                                            $hall.bootstrapTable("refresh");
+                                                            dialogItself.close();
+                                                            addDialog.close();
+                                                        }
+                                                    }]
 
-                                            });
-                                        }
-                                        else BootstrapDialog.alert(data.Message);
-                                    }, "json");
-                                    $('#Buy').validate();
-                                }
-                            }, {
-                                icon: "glyphicon glyphicon-remove",
-                                label: "取消",
-                                action: function (dialogItself) {
-                                    dialogItself.close();
-                                }
-                            }]
-                        });
-                        addDialog.open();}
+                                                });
+                                            }
+                                            else BootstrapDialog.alert(data.Message);
+                                        }, "json");
+                                        $('#Buy').validate();
+                                    }
+                                }, {
+                                    icon: "glyphicon glyphicon-remove",
+                                    label: "取消",
+                                    action: function (dialogItself) {
+                                        dialogItself.close();
+                                    }
+                                }]
+                            });
+                            addDialog.open();}
 
-                    //购买结束
-                },
-                showRefesh:"true",
-                method: "post",
-                pagination: true,
-                sidePagination: "client",
-                pageList:"[10]",
-                url:"@Url.Action("ShowHall", "CoinToCoin", new { coinname="TTG/ETH"})",
-                columns: [
-                    {title:"委托单号",field:"ID",width: "120px"},
-                { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
-                { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
-                { title: "委托人ID", field: "EntrusterID", width: "120px" },
-                { title: "总量", field: "TotalAmount", width: "120px" },
-                { title: "已出售", field: "SelledAmount", width: "120px" },
-                { title: "剩余", field: "RemainingAmount", width: "120px" },
-                 { title: " ", field: "", width: "120px",formatter: function (value, row, index) { return '<a><span style="color:red">购买</span></a>' }}
-                ]
-            });
-         
+                        //购买结束
+                    },
+                    showRefesh:"true",
+                    method: "post",
+                    pagination: true,
+                    sidePagination: "client",
+                    pageList:"[10]",
+                    url:"@Url.Action("ShowHall", "CoinToCoin")",
+                    columns: [
+                        {title:"委托单号",field:"ID",width: "120px"},
+                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH:mm:ss") },width:"160px" },
+                    { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "120px" },
+                    { title: "委托人ID", field: "EntrusterID", width: "120px" },
+                    { title: "总量", field: "TotalAmount", width: "120px" },
+                    { title: "已出售", field: "SelledAmount", width: "120px" },
+                    { title: "剩余", field: "RemainingAmount", width: "120px" },
+                     { title: " ", field: "", width: "120px",formatter: function (value, row, index) { return '<a><span style="color:red">购买</span></a>' }}
+                    ]
+                });
 
+            }
 
             ////委托发布
             //$("#entrust").submit(function(){
@@ -493,9 +417,9 @@
             //        buttons: [{
             //            label: '确定',
             //            action: function (dialogItself) {
-                           
+
             //                $.post($('#entrust').attr("action"), $('#entrust').serializeArray(), function (data) {
-                                     
+
             //                    if (data.Code == 1) {
             //                        BootstrapDialog.show({
             //                            message: data.Message,
@@ -512,7 +436,7 @@
             //                        });
 
             //                        }})
-                           
+
             //            }
             //        }],
             //    });
@@ -545,14 +469,14 @@
             else if(@ViewBag.Success==-1) $.showSuccessTimeout("持有货币不足");
             //显示当前委托
             function ShowNowEn(){
-                $.post("@Url.Action("SaveCoin")",{_s:coin},function(){})
+
                 var $nowEn=$('#nowEn');
                 $nowEn.bootstrapTable({
                     method:"post",
                     url:"@Url.Action("NowEn")",
                     columns:[
                         {title:"委托单号",field:"ID" ,width: "160px"},
-                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
+                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH:mm:ss") },width:"160px" },
                     { title: "交易对", field: "CoinToCoin", width: "160px" },
                     { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "160px" },
 
@@ -566,14 +490,14 @@
                 });}
             //显示历史委托
             function ShowHistoryEn(){
-                $.post("@Url.Action("SaveCoin")",{_s:coin},function(){})
+
                 var $heistoryEn=$('#historyEn');
                 $heistoryEn.bootstrapTable({
                     method:"post",
                     url:"@Url.Action("HistoryEn")",
                     columns:[
                         {title:"委托单号",field:"ID", width: "160px" },
-                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
+                    { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH:mm:ss") },width:"160px" },
                       { title: "交易对", field: "CoinToCoin", width: "160px" },
                     { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "160px" },
 
@@ -623,12 +547,7 @@
                 //每秒更新时间
                 // setTimeout(arguments.callee,1000);
             }
-            @*$('#Entrust').click(function(){
-                $.post("@Url.Action("AddEntrust")",{addEntrust},function(data){
-                    $.showSuccessTimeout(data.Message);
-                })
 
-            })*@
             function k(){
                 var dom = document.getElementById("container");
                 var myChart = echarts.init(dom,'shine');
@@ -682,7 +601,6 @@
                 $.ajax({
                     type: "post",
                     url: "@Url.Action("DayK")",
-                    data: { "cointocoin":coin },
                     success: function (rawData) {
 
                         var data = splitData(rawData);
@@ -749,17 +667,20 @@
                                     color: upColor
                                 }]
                             },
-                            grid: [
+                            grid: [  
+                              
                                 {
                                     left: '10%',
                                     right: '8%',
-                                    height: '50%'
+                                    height: '50%',
+                                  
                                 },
                                 {
                                     left: '10%',
                                     right: '8%',
                                     top: '63%',
                                     height: '16%'
+                                  
                                 }
                             ],
                             xAxis: [
@@ -924,7 +845,7 @@
                             areas: [
                                 {
                                     brushType: 'lineX',
-                                    coordRange: ['2018-06-02', '2018-08-20'],
+                                    coordRange: ['2018-06-02', '2020-08-20'],
                                     xAxisIndex: 0
                                 }
                             ]

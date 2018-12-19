@@ -14,27 +14,34 @@ namespace TTG.Web.Areas.Member.Controllers
     public class CoinToCoinController : Controller
     {
         private PriceTableManager _priceTableManager = new PriceTableManager();
+        private PriceInDayManager _priceInDayManager = new PriceInDayManager();
         private EntrustManager _entrustManager = new EntrustManager();
         private EntrustDetailsManager _entrustDetails = new EntrustDetailsManager();
         private WalletManager _walletManager = new WalletManager();
         private UserManager _userManager = new UserManager();
         private EntrustDetailsManager _entrustsDetailsManager = new EntrustDetailsManager();
         private PriceInADealManager _priceInADealManager = new PriceInADealManager();
+        private UserIdentyManager _identy = new UserIdentyManager();
        
         private  static int ID;
         private static double Amount;
         private static int EntrusterID;
+        private static int EntrustID;
+        private static string cointocoin = "TTG/ETH";
         private static string payCoin;
         private static string sellCoin;
-        public ActionResult SaveID(int id,double amount,int entrusterID)
+        public ActionResult SaveID(int id,double amount,int entrusterID,int entrustID)
         {
             Amount = amount;
             ID = id;
             EntrusterID = entrusterID;
+            EntrustID = entrustID;
             return null;
         }
         public ActionResult SaveCoin(string _s)
         {
+            cointocoin = _s;
+            ViewBag.cointocoin = cointocoin;
             int i = 0;
             int j = _s.Length - 1;
             while (i < _s.Length)
@@ -47,18 +54,25 @@ namespace TTG.Web.Areas.Member.Controllers
 
             return null;
         }
-        // GET: Member/CoinToCoin
-        public ActionResult Index(string coin)
+
+        [AllowAnonymous]
+        [HttpPost]
+        public JsonResult ListJson()
         {
-            ViewBag.coin = coin;
+            return Json(_priceInDayManager.FindList(cointocoin), JsonRequestBehavior.AllowGet);
+        }
+        // GET: Member/CoinToCoin
+        public ActionResult Index()
+        {
+            
             ViewBag.Success = 100;
+            ViewBag.cointocoin = cointocoin;
+           
             return View();
         }
-        public JsonResult DayK(string cointocoin)
+        public JsonResult DayK()
         {
             List<PriceTableViewModel> ptvm = new List<PriceTableViewModel>();
-            if (cointocoin == null) cointocoin = "TTG/ETH";
-            
             foreach(var  item in _priceTableManager.FindList(cointocoin))
             {
                 ptvm.Add(new PriceTableViewModel
@@ -73,12 +87,13 @@ namespace TTG.Web.Areas.Member.Controllers
                 });
            
             }
+            ViewBag.cointocoin = cointocoin;
             return Json(ptvm);
         }
-      public JsonResult AmountInDay(string cointocoin)
+      public JsonResult AmountInDay()
         {
             List<PriceInDayViewModel> _priceInDay = new List<PriceInDayViewModel>();
-            if (cointocoin == null) cointocoin = "TTG/ETH";
+           
 
             foreach (var item in _priceTableManager.FindListNowaday(cointocoin))
             {
@@ -94,10 +109,11 @@ namespace TTG.Web.Areas.Member.Controllers
             return Json(_priceInDay);
         }
 
-        public JsonResult Transaction(string coinname,int? id)
+        public JsonResult Transaction(int? id)
         {  if (id == null) id = -1;
+          
             List<EntrustViewModel> _entrust = new List<EntrustViewModel>();
-            foreach(var item in _entrustManager.FindListNowaday(coinname,id))
+            foreach(var item in _entrustManager.FindListNowaday(cointocoin,id))
             {
                 _entrust.Add(new EntrustViewModel
                 {
@@ -110,10 +126,10 @@ namespace TTG.Web.Areas.Member.Controllers
             }
             return Json(_entrust);
         }
-        public JsonResult ShowHall(string coinname)
-        {
+        public JsonResult ShowHall()
+        {   
             List<HallViewModel> _hall = new List<HallViewModel>();
-            foreach(var item in _entrustManager.FindListSell(coinname))
+            foreach(var item in _entrustManager.FindListSell(cointocoin))
             {   //不显示自己的委托
                 //    if (item.User.UserID == int.Parse(Session["UserID"].ToString())) continue;
                 try
@@ -183,14 +199,8 @@ namespace TTG.Web.Areas.Member.Controllers
                 _res.Message = "超过该委托寄售的货币数量";
                 return Json(_res);
             }
-           
-            try {
-                if (_userManager.Find(id).UserIdenty.Password == null)
-                {
-
-                }
-            }
-            catch
+           int identyId=_userManager.Find(id).FKIdentyID;
+            if(string.IsNullOrEmpty(_identy.Find(identyId).Password))
             {
                 _res.Code = 0;
                 _res.Message = "请先设置交易密码";
@@ -212,8 +222,9 @@ namespace TTG.Web.Areas.Member.Controllers
                 return Json(_res);
             }
             if (ModelState.IsValid)
-            {  
-              
+            {   
+                
+                string cointocoin = addSale.SellCoin + "/"+addSale.PayCoin;
             //减少支付货币 
                 Wallet _wallet = _walletManager.GetWallet(id, addSale.PayCoin);
                 _wallet.Amount -= addSale.Amount * addSale.price;
@@ -222,36 +233,91 @@ namespace TTG.Web.Areas.Member.Controllers
                 Wallet _entrustWallet = _walletManager.GetWallet(EntrusterID, addSale.PayCoin);
                 _entrustWallet.Amount+= addSale.Amount * addSale.price;
                 _walletManager.Update(_entrustWallet);
+               
                 //更新委托 如果委托数量为零 则标记委托成功 记1，添加成功时间
                 Entrust _entrust = new Entrust();
                 _entrust = _entrustManager.Find(ID);
-                if (Amount- addSale.Amount  == 0)
-                { _entrust.IsSuccess = 1;
+                if (Amount - addSale.Amount == 0)
+                {
+                    _entrust.IsSuccess = 1;
                     _entrust.SucOrDefTime = DateTime.Now;
                     _entrustManager.Update(_entrust);
                 }
-                else
-                {  //不为零，添加委托详情表
-                    EntrustDetails _entrustDetails =new EntrustDetails();
+                
+                 //添加委托详情表
+                    EntrustDetails _entrustDetails = new EntrustDetails();
                     _entrustDetails.Amount = addSale.Amount;
                     _entrustDetails.BuyerID = id;
                     _entrustDetails.SellID = _entrustManager.Find(ID).FUserID;
+                    _entrustDetails.EntrustID=EntrustID;
                     _entrustsDetailsManager.Add(_entrustDetails);
-                    //一笔交易成功 添加一日中每一笔的价格表
+                
+                 //一笔交易成功 添加一日中每一笔的价格表
                     PriceInADeal _priceInADeal = new PriceInADeal();
                     _priceInADeal.DealTime = DateTime.Now;
                     _priceInADeal.Amount = addSale.Amount;
                     _priceInADeal.Price = addSale.price;
+                    PriceInDay pd= _priceInDayManager.Find(u => u.CoinToCoin == cointocoin);
+                    _priceInADeal.PriceInDayID = pd.ID;
                     _priceInADealManager.Add(_priceInADeal);
+                    
+                    
+                    
+                    //一笔交易进来判断是否为第一笔（总表内是否有该天的数据）
+                    try//不为空 不是第一笔 更新该数据,设置priceinday的 up volumeInday等属性
+                    {
+                  
+                        DateTime time = _priceInADeal.DealTime;
+                        PriceTable pt=_priceTableManager.IfFirstOrNo(cointocoin,time);
+                        pt.Amount += _priceInADeal.Amount;
+                        if (pt.MaxPrice < _priceInADeal.Price) pt.MaxPrice = _priceInADeal.Price;
+                        if (pt.MinPrice > _priceInADeal.Price) pt.MinPrice = _priceInADeal.Price;
+                        pt.ClosingPrice = _priceInADeal.Price;
+                        _priceTableManager.Update(pt); 
+                        //更新PriceInADay
+                        if (pd.MaxInDay < _priceInADeal.Price) pd.MaxInDay = _priceInADeal.Price;
+                        if (pd.MinInDay > _priceInADeal.Price) pd.MinInDay = _priceInADeal.Price;
+                        pd.Up = (_priceInADeal.Price-pd.Price)/pd.Price;
+                        pd.Price = _priceInADeal.Price;
+                        pd.VolumeInDay += _priceInADeal.Price * _priceInADeal.Amount;
+                        pd.AmountInDay += _priceInADeal.Amount;
 
-                } //增加购买的货币
+                    }
+                    catch//为空 总表添加该天的数据
+                    {
+                        PriceTable pt = new PriceTable()
+                        {
+                            KDateTime = DateTime.Now,
+                            CoinToCoin = cointocoin,
+                            OpeningPrice = _priceInADeal.Price,
+                            ClosingPrice = _priceInADeal.Price,
+                            MaxPrice = _priceInADeal.Price,
+                            MinPrice = _priceInADeal.Price,
+                            Amount = _priceInADeal.Amount,
+                            
+                        };
+                        _priceTableManager.Add(pt);
+                        //更新priceInADay
+                        pd.MaxInDay = _priceInADeal.Price;
+                        pd.MinInDay = _priceInADeal.Price;
+                        pd.Price = _priceInADeal.Price;
+                        pd.Up = 0;
+                        pd.VolumeInDay = _priceInADeal.Price * _priceInADeal.Amount;
+                        pd.AmountInDay = _priceInADeal.Amount;
+                }
+                //更新priceInDay
+                _priceInDayManager.Update(pd);
+
+                  
+
+                //增加购买的货币
                 Wallet _wallet2= _walletManager.GetWallet(id, addSale.SellCoin);
                 _wallet2.Amount += addSale.Amount;
                 _walletManager.Update(_wallet2);
-                //委托方减少货币
-                Wallet _entrustWallet2 = _walletManager.GetWallet(EntrusterID, addSale.SellCoin);
-                _entrustWallet2.Amount -= addSale.Amount;
-                _walletManager.Update(_entrustWallet2);
+                //委托方减少货币,发布委托时已经减少了
+                //Wallet _entrustWallet2 = _walletManager.GetWallet(EntrusterID, addSale.SellCoin);
+                //_entrustWallet2.Amount -= addSale.Amount;
+                //_walletManager.Update(_entrustWallet2);
 
             }
             else
@@ -281,11 +347,11 @@ namespace TTG.Web.Areas.Member.Controllers
           
             double personCoinAmount = _walletManager.GetWallet(id, addEntrust.ESellCoin).Amount;
 
-            if (personCoinAmount == 0 || (addEntrust.EAmount > personCoinAmount))
+            if (personCoinAmount <= 0 || (addEntrust.EAmount > personCoinAmount))
             {
                 
                 ViewBag.Success = "-1";
-                ////return View("AddDefeat");
+                return View("Index");
 
             }
          

@@ -73,19 +73,21 @@
         var coin;
         var $table = $('#grid');
         $table.bootstrapTable({
-          
+            onClickRow: function (row) {
+                $.post("@Url.Action("SaveCoin","CoinToCoin")", { _s: row.CoinToCoin });
+            },
             //showFooter: true,
             method: "post",
             //search:true,
             url: "@Url.Action("ListJson","User", new { s = "ETH" })",
             columns: [
                 { title: "交易对", field: "CoinToCoin", width: "200px" },
-                { title: "价格", field: "Price", width: "200px" },
+                { title: "最新价格", field: "Price", width: "200px" },
                 { title: "24h最高", field: "MaxInDay", width: "200px" },
                 { title: "24h最低", field: "MinInDay", width: "200px" },
-                { title: "24h成交量", field: "VolumeInDay", width: "200px" },
-                { title: "24h成交额", field: "AmountInDay", width: "200px" },
-                { title: "涨幅%", field: "Up", width: "200px" },
+                { title: "24h成交额", field: "VolumeInDay", width: "200px" },
+                { title: "24h成交量", field: "AmountInDay", width: "200px" },
+                { title: "涨幅%", field: "Up", width: "200px", formatter: function (value) { return (Math.round(value * 10000) / 100).toFixed(2) + '%'; } },
                 { title: "去交易", field: "-》", width: "200px" ,formatter: function (value, row, index) { return '<a href="@Url.Action("Index", "CoinToCoin")"> 去交易</a>' } },
 
             ]

@@ -32,8 +32,14 @@ namespace TTG.Web.Areas.Control.Controllers
         [HttpPost]
         public JsonResult DeleteJson(int id)
         {
-            _wallet.Delete(id);
-            return Json(_app.Delete(id));
+            List<Wallet> walletIdList = _wallet.FindList(u => u.VirCurID == id).ToList();
+            foreach (var item in walletIdList)
+            {
+                _wallet.Delete(item.WalletID);
+            }
+            
+            
+            return Json((_vir.Delete(id)));
         }
         public ActionResult ApplicationList()
         {
@@ -129,7 +135,7 @@ namespace TTG.Web.Areas.Control.Controllers
                     }
                 //为新加的货币添加每日情况表
                 PriceInDay pr = new PriceInDay {
-                    CoinToCoin= ctc.Name + "/" + ctc.Name,
+                    CoinToCoin= ctc.Name + "/" + _type.Find(ctc.ID).TypeName,
                     AmountInDay=0,
                     Price=0,
                     VolumeInDay=0,

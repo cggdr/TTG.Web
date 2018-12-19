@@ -17,5 +17,6 @@ namespace TTG.Core
         [Display(Name = "交易密码")]
         public string Password { get; set; }
       
+
     }
 }

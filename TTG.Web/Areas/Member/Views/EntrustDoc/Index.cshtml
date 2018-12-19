@@ -54,7 +54,7 @@
             url:"@Url.Action("NowEn")",
             columns:[
                 {title:"委托单号",field:"ID" ,width: "160px"},
-            { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH-mm-ss") },width:"160px" },
+            { title: "委托时间", field: "EntrustTime", formatter: function (value) { return moment(value).format("YY-MM-DD HH:mm:ss") },width:"160px" },
             { title: "交易对", field: "CoinToCoin", width: "160px" },
             { title: "价格", field: "Price", formatter: function (value) { return value.toFixed(8) }, width: "160px" },
 

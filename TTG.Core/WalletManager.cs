@@ -12,7 +12,7 @@ namespace TTG.Core
         public Wallet GetWallet(int id,string coinname)
         {
             int virID=_vir.FindVirID(coinname);
-            var _where = PredicateBuilder.True<Wallet>();
+            var _where = PredicateBuilder.New<Wallet>();
             _where = _where.And(u => u.UserID == id);
             _where = _where.And(u => u.VirCurID == virID);
             return Repository.Find(_where);

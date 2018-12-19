@@ -20,12 +20,12 @@ namespace TTG.Core
             }
             string coinname = _s.Substring(0, i-0);
             string payname = _s.Substring(i+1 , j-i);
-            var _where = PredicateBuilder.True<Entrust>();
+            var _where = PredicateBuilder.New<Entrust>();
             
             _where = _where.And(u => u.CoinName==coinname);
             _where = _where.And(u => u.PayCoinName == payname);
             if (id != -1) _where = _where.And(u => u.User.UserID == id );
-            List<Entrust> pd = Repository.FindList(_where.Expand()).OrderByDescending(u => u.SucOrDefTime).Take(12).ToList();
+            List<Entrust> pd = Repository.FindList(_where).OrderByDescending(u => u.SucOrDefTime).Take(12).ToList();
             return pd;
         }
 
@@ -40,20 +40,20 @@ namespace TTG.Core
             }
             string coinname = _s.Substring(0, i - 0);
             string payname = _s.Substring(i + 1, j - i-1);
-            var _where = PredicateBuilder.True<Entrust>();
+            var _where = PredicateBuilder.New<Entrust>();
 
             _where = _where.And(u => u.CoinName == coinname);
             _where = _where.And(u => u.PayCoinName == payname);
             _where = _where.And(u => u.IsSuccess == 0);
          
-            return FindList(_where.Expand()).OrderByDescending(u => u.EnstructTime).ToList();
+            return FindList(_where).OrderByDescending(u => u.EnstructTime).ToList();
         }
         public override Entrust Find(int id)
         {
             return Repository.Find(u => u.ID == id);
         }
         public List<Entrust> FindListNowEn(int id,string cointocoin)
-        {   var _where = PredicateBuilder.True<Entrust>();
+        {   var _where = PredicateBuilder.New<Entrust>();
             if (!string.IsNullOrEmpty(cointocoin))
             {
                 int i = 0;
@@ -71,13 +71,13 @@ namespace TTG.Core
             _where = _where.And(u => u.FUserID == id);
             _where = _where.And(u=>u.IsSuccess==0);
             List<Entrust> pd = new List<Entrust>();
-            if(!string.IsNullOrEmpty(cointocoin)) pd = Repository.FindList(_where.Expand()).OrderByDescending(u => u.EnstructTime).Take(3).ToList();
-            else pd = Repository.FindList(_where.Expand()).OrderByDescending(u => u.EnstructTime).ToList();
+            if(!string.IsNullOrEmpty(cointocoin)) pd = Repository.FindList(_where).OrderByDescending(u => u.EnstructTime).Take(3).ToList();
+            else pd = Repository.FindList(_where).OrderByDescending(u => u.EnstructTime).ToList();
            
             return pd;
         }
         public List<Entrust> FindListHistoryEn(int id, string cointocoin)
-        { var _where = PredicateBuilder.True<Entrust>();
+        { var _where = PredicateBuilder.New<Entrust>();
             if(!string.IsNullOrEmpty(cointocoin))
          { 
             int i = 0;
@@ -95,13 +95,13 @@ namespace TTG.Core
             _where = _where.And(u => u.FUserID == id);
             _where = _where.And(u => u.IsSuccess != 0);
             List<Entrust> pd = new List<Entrust>();
-            if (!string.IsNullOrEmpty(cointocoin))  pd = Repository.FindList(_where.Expand()).OrderByDescending(u => u.EnstructTime).Take(3).ToList();
-            else pd = Repository.FindList(_where.Expand()).OrderByDescending(u => u.EnstructTime).ToList();
+            if (!string.IsNullOrEmpty(cointocoin))  pd = Repository.FindList(_where).OrderByDescending(u => u.EnstructTime).Take(3).ToList();
+            else pd = Repository.FindList(_where).OrderByDescending(u => u.EnstructTime).ToList();
             return pd;
         }
         public List<Entrust> FindListSuccessfulEn(int id, string cointocoin)
         {
-            var _where = PredicateBuilder.True<Entrust>();
+            var _where = PredicateBuilder.New<Entrust>();
             if (!string.IsNullOrEmpty(cointocoin))
             {
                 int i = 0;
@@ -119,7 +119,7 @@ namespace TTG.Core
             _where = _where.And(u => u.FUserID == id);
             _where = _where.And(u => u.IsSuccess == 1);
 
-            List<Entrust> pd = Repository.FindList(_where.Expand()).OrderByDescending(u => u.EnstructTime).ToList();
+            List<Entrust> pd = Repository.FindList(_where).OrderByDescending(u => u.EnstructTime).ToList();
             return pd;
         }
     }

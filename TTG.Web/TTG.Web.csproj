@@ -210,7 +210,11 @@
     <Compile Include="Areas\Control\Models\AddAdminViewModel.cs" />
     <Compile Include="Areas\Control\Models\AddCTCViewModel.cs" />
     <Compile Include="Areas\Control\Models\AddUserViewModel.cs" />
+    <Compile Include="Areas\Control\Models\CoinBar.cs" />
+    <Compile Include="Areas\Control\Models\EntrustDataSet.cs" />
     <Compile Include="Areas\Control\Models\LoginViewModel.cs" />
+    <Compile Include="Areas\Control\Models\SexPie.cs" />
+    <Compile Include="Areas\Control\Models\UserLoginLine.cs" />
     <Compile Include="Areas\Member\Controllers\C2CController.cs" />
     <Compile Include="Areas\Member\Controllers\CoinToCoinController.cs" />
     <Compile Include="Areas\Member\Controllers\EntrustDocController.cs" />
@@ -250,6 +254,10 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\aspnet-TTG.Web-20181022094023.mdf" />
+    <Content Include="App_Data\aspnet-TTG.Web-20181022094023_log.ldf">
+      <DependentUpon>aspnet-TTG.Web-20181022094023.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-dialog.css" />
@@ -337,6 +345,7 @@
     <Content Include="Areas\Member\Views\User\RegProtocol.cshtml" />
     <Content Include="Scripts\dark.js" />
     <Content Include="Scripts\dataTool.min.js" />
+    <Content Include="Scripts\echarts.js" />
     <Content Include="Scripts\ecStat.min.js" />
     <Content Include="Areas\Member\Views\CoinToCoin\AddSalePartialView.cshtml" />
     <Content Include="Areas\Member\Views\CoinToCoin\Index.cshtml" />
@@ -361,6 +370,7 @@
     <Content Include="Areas\Control\Views\Coin\SideNavPartialView.cshtml" />
     <Content Include="Areas\Control\Views\Coin\ApplicationList.cshtml" />
     <Content Include="Areas\Control\Views\Coin\Add.cshtml" />
+    <Content Include="Areas\Control\Views\Home\SideNavPartialView.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\echarts.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -382,6 +392,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\shine.js" />
     <Content Include="Scripts\SMSValidate.js" />
+    <Content Include="Scripts\TimeStamptoTime.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -419,7 +430,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="docs\" />
   </ItemGroup>
   <ItemGroup>

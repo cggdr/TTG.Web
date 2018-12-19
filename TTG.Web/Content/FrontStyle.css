@@ -96,4 +96,16 @@ a:link{
     display:inline-block;
     
 }
+
+.oval{
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border-radius: 20px;
+width:85px;
+
+margin-left :6px;
+} 
+
+
+
  

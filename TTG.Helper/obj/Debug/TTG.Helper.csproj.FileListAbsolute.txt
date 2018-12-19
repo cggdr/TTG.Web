@@ -8,3 +8,13 @@ C:\Users\Administrator\Desktop\TTG.Web\TTG.Web\TTG.Helper\bin\Debug\TTG.Helper.p
 C:\Users\Administrator\Desktop\TTG.Web\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.csprojResolveAssemblyReference.cache
 C:\Users\Administrator\Desktop\TTG.Web\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.dll
 C:\Users\Administrator\Desktop\TTG.Web\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.pdb
+C:\Users\Administrator\Desktop\TTG.Web\TTG.Helper\bin\Debug\TTG.Helper.dll
+C:\Users\Administrator\Desktop\TTG.Web\TTG.Helper\bin\Debug\TTG.Helper.pdb
+C:\Users\Administrator\Desktop\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.dll
+C:\Users\Administrator\Desktop\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.pdb
+C:\Users\Administrator\Desktop\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\TTG.Web3\TTG.Web2\TTG.Web2\TTG.Web\TTG.Helper\bin\Debug\TTG.Helper.dll
+C:\Users\Administrator\Desktop\TTG.Web3\TTG.Web2\TTG.Web2\TTG.Web\TTG.Helper\bin\Debug\TTG.Helper.pdb
+C:\Users\Administrator\Desktop\TTG.Web3\TTG.Web2\TTG.Web2\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\TTG.Web3\TTG.Web2\TTG.Web2\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.dll
+C:\Users\Administrator\Desktop\TTG.Web3\TTG.Web2\TTG.Web2\TTG.Web\TTG.Helper\obj\Debug\TTG.Helper.pdb

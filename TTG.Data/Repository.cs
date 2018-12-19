@@ -24,11 +24,13 @@ namespace TTG.Data
             public Repository()
             { }
 
-            /// <summary>
-            /// 构造函数
-            /// </summary>
-            /// <param name="dbContext">数据上下文</param>
-            public Repository(DbContext dbContext)
+      
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="dbContext">数据上下文</param>
+        public Repository(DbContext dbContext)
             {
                 DbContext = dbContext;
             }
@@ -54,15 +56,16 @@ namespace TTG.Data
             {
                 return DbContext.Set<T>().SingleOrDefault(where);
             }
-            #endregion
+      
+        #endregion
 
-            //查找实体列表
-            #region FindList
-            /// <summary>
-            /// 查找实体列表
-            /// </summary>
-            /// <returns></returns>
-            public IQueryable<T> FindList()
+        //查找实体列表
+        #region FindList
+        /// <summary>
+        /// 查找实体列表
+        /// </summary>
+        /// <returns></returns>
+        public IQueryable<T> FindList()
             {
                 return DbContext.Set<T>();
             }

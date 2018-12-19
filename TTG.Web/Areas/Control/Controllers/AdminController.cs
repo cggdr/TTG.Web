@@ -39,6 +39,8 @@ namespace TTG.Web.Areas.Control.Controllers
                     _admin.Accounts = addAdmin.Accounts;
                     _admin.CreateTime = System.DateTime.Now;
                     _admin.Password = Security.SHA256(addAdmin.Password);
+                    _admin.LoginTime = DateTime.Now;
+
                     _res = adminManager.Add(_admin);
                 }
             }
